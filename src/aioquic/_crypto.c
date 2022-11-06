@@ -104,7 +104,7 @@ AEAD_dealloc(AEADObject *self)
 {
     EVP_CIPHER_CTX_free(self->decrypt_ctx);
     EVP_CIPHER_CTX_free(self->encrypt_ctx);
-    Py_TYPE(self)->tp_free((PyObject *) self);
+    PyObject_Free(self);
 }
 
 static PyObject*
@@ -195,45 +195,62 @@ static PyMethodDef AEAD_methods[] = {
     {NULL}
 };
 
-static PyTypeObject AEADType = {
-    PyVarObject_HEAD_INIT(NULL, 0)
-    MODULE_NAME ".AEAD",                /* tp_name */
-    sizeof(AEADObject),                 /* tp_basicsize */
-    0,                                  /* tp_itemsize */
-    (destructor)AEAD_dealloc,           /* tp_dealloc */
-    0,                                  /* tp_print */
-    0,                                  /* tp_getattr */
-    0,                                  /* tp_setattr */
-    0,                                  /* tp_reserved */
-    0,                                  /* tp_repr */
-    0,                                  /* tp_as_number */
-    0,                                  /* tp_as_sequence */
-    0,                                  /* tp_as_mapping */
-    0,                                  /* tp_hash  */
-    0,                                  /* tp_call */
-    0,                                  /* tp_str */
-    0,                                  /* tp_getattro */
-    0,                                  /* tp_setattro */
-    0,                                  /* tp_as_buffer */
-    Py_TPFLAGS_DEFAULT,                 /* tp_flags */
-    "AEAD objects",                     /* tp_doc */
-    0,                                  /* tp_traverse */
-    0,                                  /* tp_clear */
-    0,                                  /* tp_richcompare */
-    0,                                  /* tp_weaklistoffset */
-    0,                                  /* tp_iter */
-    0,                                  /* tp_iternext */
-    AEAD_methods,                       /* tp_methods */
-    0,                                  /* tp_members */
-    0,                                  /* tp_getset */
-    0,                                  /* tp_base */
-    0,                                  /* tp_dict */
-    0,                                  /* tp_descr_get */
-    0,                                  /* tp_descr_set */
-    0,                                  /* tp_dictoffset */
-    (initproc)AEAD_init,                /* tp_init */
-    0,                                  /* tp_alloc */
+//static PyTypeObject AEADType = {
+//    PyVarObject_HEAD_INIT(NULL, 0)
+//    MODULE_NAME ".AEAD",                /* tp_name */
+//    sizeof(AEADObject),                 /* tp_basicsize */
+//    0,                                  /* tp_itemsize */
+//    (destructor)AEAD_dealloc,           /* tp_dealloc */
+//    0,                                  /* tp_print */
+//    0,                                  /* tp_getattr */
+//    0,                                  /* tp_setattr */
+//    0,                                  /* tp_reserved */
+//    0,                                  /* tp_repr */
+//    0,                                  /* tp_as_number */
+//    0,                                  /* tp_as_sequence */
+//    0,                                  /* tp_as_mapping */
+//    0,                                  /* tp_hash  */
+//    0,                                  /* tp_call */
+//    0,                                  /* tp_str */
+//    0,                                  /* tp_getattro */
+//    0,                                  /* tp_setattro */
+//    0,                                  /* tp_as_buffer */
+//    Py_TPFLAGS_DEFAULT,                 /* tp_flags */
+//    "AEAD objects",                     /* tp_doc */
+//    0,                                  /* tp_traverse */
+//    0,                                  /* tp_clear */
+//    0,                                  /* tp_richcompare */
+//    0,                                  /* tp_weaklistoffset */
+//    0,                                  /* tp_iter */
+//    0,                                  /* tp_iternext */
+//    AEAD_methods,                       /* tp_methods */
+//    0,                                  /* tp_members */
+//    0,                                  /* tp_getset */
+//    0,                                  /* tp_base */
+//    0,                                  /* tp_dict */
+//    0,                                  /* tp_descr_get */
+//    0,                                  /* tp_descr_set */
+//    0,                                  /* tp_dictoffset */
+//    (initproc)AEAD_init,                /* tp_init */
+//    0,                                  /* tp_alloc */
+//};
+
+static PyType_Slot AEADType_slots[] = {
+    {Py_tp_dealloc, AEAD_dealloc},
+    {Py_tp_methods, AEAD_methods},
+    {Py_tp_doc, "AEAD objects 2"},
+    {Py_tp_init, AEAD_init},
+    {0, 0},
 };
+
+static PyType_Spec AEADType_spec = {
+    MODULE_NAME ".AEADType",
+    sizeof(AEADObject),
+    0,
+    Py_TPFLAGS_DEFAULT,
+    AEADType_slots
+};
+
 
 /* HeaderProtection */
 
@@ -286,7 +303,7 @@ static void
 HeaderProtection_dealloc(HeaderProtectionObject *self)
 {
     EVP_CIPHER_CTX_free(self->ctx);
-    Py_TYPE(self)->tp_free((PyObject *) self);
+    PyObject_Free(self);
 }
 
 static int HeaderProtection_mask(HeaderProtectionObject *self, const unsigned char* sample)
@@ -369,46 +386,62 @@ static PyMethodDef HeaderProtection_methods[] = {
     {NULL}
 };
 
-static PyTypeObject HeaderProtectionType = {
-    PyVarObject_HEAD_INIT(NULL, 0)
-    MODULE_NAME ".HeaderProtection",    /* tp_name */
-    sizeof(HeaderProtectionObject),     /* tp_basicsize */
-    0,                                  /* tp_itemsize */
-    (destructor)HeaderProtection_dealloc,   /* tp_dealloc */
-    0,                                  /* tp_print */
-    0,                                  /* tp_getattr */
-    0,                                  /* tp_setattr */
-    0,                                  /* tp_reserved */
-    0,                                  /* tp_repr */
-    0,                                  /* tp_as_number */
-    0,                                  /* tp_as_sequence */
-    0,                                  /* tp_as_mapping */
-    0,                                  /* tp_hash  */
-    0,                                  /* tp_call */
-    0,                                  /* tp_str */
-    0,                                  /* tp_getattro */
-    0,                                  /* tp_setattro */
-    0,                                  /* tp_as_buffer */
-    Py_TPFLAGS_DEFAULT,                 /* tp_flags */
-    "HeaderProtection objects",         /* tp_doc */
-    0,                                  /* tp_traverse */
-    0,                                  /* tp_clear */
-    0,                                  /* tp_richcompare */
-    0,                                  /* tp_weaklistoffset */
-    0,                                  /* tp_iter */
-    0,                                  /* tp_iternext */
-    HeaderProtection_methods,           /* tp_methods */
-    0,                                  /* tp_members */
-    0,                                  /* tp_getset */
-    0,                                  /* tp_base */
-    0,                                  /* tp_dict */
-    0,                                  /* tp_descr_get */
-    0,                                  /* tp_descr_set */
-    0,                                  /* tp_dictoffset */
-    (initproc)HeaderProtection_init,    /* tp_init */
-    0,                                  /* tp_alloc */
+//static PyTypeObject HeaderProtectionType = {
+//    PyVarObject_HEAD_INIT(NULL, 0)
+//    MODULE_NAME ".HeaderProtection",    /* tp_name */
+//    sizeof(HeaderProtectionObject),     /* tp_basicsize */
+//    0,                                  /* tp_itemsize */
+//    (destructor)HeaderProtection_dealloc,   /* tp_dealloc */
+//    0,                                  /* tp_print */
+//    0,                                  /* tp_getattr */
+//    0,                                  /* tp_setattr */
+//    0,                                  /* tp_reserved */
+//    0,                                  /* tp_repr */
+//    0,                                  /* tp_as_number */
+//    0,                                  /* tp_as_sequence */
+//    0,                                  /* tp_as_mapping */
+//    0,                                  /* tp_hash  */
+//    0,                                  /* tp_call */
+//    0,                                  /* tp_str */
+//    0,                                  /* tp_getattro */
+//    0,                                  /* tp_setattro */
+//    0,                                  /* tp_as_buffer */
+//    Py_TPFLAGS_DEFAULT,                 /* tp_flags */
+//    "HeaderProtection objects",         /* tp_doc */
+//    0,                                  /* tp_traverse */
+//    0,                                  /* tp_clear */
+//    0,                                  /* tp_richcompare */
+//    0,                                  /* tp_weaklistoffset */
+//    0,                                  /* tp_iter */
+//    0,                                  /* tp_iternext */
+//    HeaderProtection_methods,           /* tp_methods */
+//    0,                                  /* tp_members */
+//    0,                                  /* tp_getset */
+//    0,                                  /* tp_base */
+//    0,                                  /* tp_dict */
+//    0,                                  /* tp_descr_get */
+//    0,                                  /* tp_descr_set */
+//    0,                                  /* tp_dictoffset */
+//    (initproc)HeaderProtection_init,    /* tp_init */
+//    0,                                  /* tp_alloc */
+//};
+
+
+static PyType_Slot HeaderProtectionType_slots[] = {
+    {Py_tp_dealloc, HeaderProtection_dealloc},
+    {Py_tp_methods, HeaderProtection_methods},
+    {Py_tp_doc, "HeaderProtection objects 2"},
+    {Py_tp_init, HeaderProtection_init},
+    {0, 0},
 };
 
+static PyType_Spec HeaderProtectionType_spec = {
+    MODULE_NAME ".HeaderProtectionType",
+    sizeof(HeaderProtectionObject),
+    0,
+    Py_TPFLAGS_DEFAULT,
+    HeaderProtectionType_slots
+};
 
 static struct PyModuleDef moduledef = {
     PyModuleDef_HEAD_INIT,
@@ -435,17 +468,15 @@ PyInit__crypto(void)
     Py_INCREF(CryptoError);
     PyModule_AddObject(m, "CryptoError", CryptoError);
 
-    AEADType.tp_new = PyType_GenericNew;
-    if (PyType_Ready(&AEADType) < 0)
+    PyObject *v = PyType_FromSpec(&AEADType_spec);
+    if (v == NULL)
         return NULL;
-    Py_INCREF(&AEADType);
-    PyModule_AddObject(m, "AEAD", (PyObject *)&AEADType);
+    PyModule_AddObject(m, "AEAD", v);
 
-    HeaderProtectionType.tp_new = PyType_GenericNew;
-    if (PyType_Ready(&HeaderProtectionType) < 0)
+    PyObject *w = PyType_FromSpec(&HeaderProtectionType_spec);
+    if (w == NULL)
         return NULL;
-    Py_INCREF(&HeaderProtectionType);
-    PyModule_AddObject(m, "HeaderProtection", (PyObject *)&HeaderProtectionType);
+    PyModule_AddObject(m, "HeaderProtection", w);
 
     // ensure required ciphers are initialised
     EVP_add_cipher(EVP_aes_128_ecb());
