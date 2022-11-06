@@ -104,7 +104,10 @@ AEAD_dealloc(AEADObject *self)
 {
     EVP_CIPHER_CTX_free(self->decrypt_ctx);
     EVP_CIPHER_CTX_free(self->encrypt_ctx);
-    PyObject_Free(self);
+    PyTypeObject *tp = Py_TYPE(self);
+    freefunc free = PyType_GetSlot(tp, Py_tp_free);
+    free(self);
+    Py_DECREF(tp);
 }
 
 static PyObject*
@@ -303,7 +306,10 @@ static void
 HeaderProtection_dealloc(HeaderProtectionObject *self)
 {
     EVP_CIPHER_CTX_free(self->ctx);
-    PyObject_Free(self);
+    PyTypeObject *tp = Py_TYPE(self);
+    freefunc free = PyType_GetSlot(tp, Py_tp_free);
+    free(self);
+    Py_DECREF(tp);
 }
 
 static int HeaderProtection_mask(HeaderProtectionObject *self, const unsigned char* sample)
