@@ -243,6 +243,7 @@ static PyType_Slot AEADType_slots[] = {
     {Py_tp_methods, AEAD_methods},
     {Py_tp_doc, "AEAD objects 2"},
     {Py_tp_init, AEAD_init},
+    {Py_tp_new, PyType_GenericNew},
     {0, 0},
 };
 
@@ -438,6 +439,7 @@ static PyType_Slot HeaderProtectionType_slots[] = {
     {Py_tp_methods, HeaderProtection_methods},
     {Py_tp_doc, "HeaderProtection objects 2"},
     {Py_tp_init, HeaderProtection_init},
+    {Py_tp_new, PyType_GenericNew},
     {0, 0},
 };
 
