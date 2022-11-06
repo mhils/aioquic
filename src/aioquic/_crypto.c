@@ -243,7 +243,7 @@ static PyMethodDef AEAD_methods[] = {
 static PyType_Slot AEADType_slots[] = {
     {Py_tp_dealloc, AEAD_dealloc},
     {Py_tp_methods, AEAD_methods},
-    {Py_tp_doc, "AEAD objects 2"},
+    {Py_tp_doc, "AEAD objects"},
     {Py_tp_init, AEAD_init},
 //    {Py_tp_new, PyType_GenericNew},
     {0, 0},
@@ -441,7 +441,7 @@ static PyMethodDef HeaderProtection_methods[] = {
 static PyType_Slot HeaderProtectionType_slots[] = {
     {Py_tp_dealloc, HeaderProtection_dealloc},
     {Py_tp_methods, HeaderProtection_methods},
-    {Py_tp_doc, "HeaderProtection objects 2"},
+    {Py_tp_doc, "HeaderProtection objects"},
     {Py_tp_init, HeaderProtection_init},
 //    {Py_tp_new, PyType_GenericNew},
     {0, 0},
@@ -492,11 +492,11 @@ PyInit__crypto(void)
     PyModule_AddObject(m, "AEAD", o);
 
 
-    HeaderProtection = PyType_FromSpec(&HeaderProtection_spec);
-    if (HeaderProtection == NULL)
+    HeaderProtectionType = PyType_FromSpec(&HeaderProtectionType_spec);
+    if (HeaderProtectionType == NULL)
         return NULL;
 
-    PyObject *p = PyType_FromSpec(&HeaderProtection_spec);
+    PyObject *p = PyType_FromSpec(&HeaderProtectionType_spec);
     if (p == NULL)
         return NULL;
     PyModule_AddObject(m, "HeaderProtection", p);

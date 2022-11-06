@@ -410,7 +410,7 @@ static PyGetSetDef Buffer_getset[] = {
 static PyType_Slot BufferType_slots[] = {
     {Py_tp_dealloc, Buffer_dealloc},
     {Py_tp_methods, Buffer_methods},
-    {Py_tp_doc, "Buffer objects 2"},
+    {Py_tp_doc, "Buffer objects"},
     {Py_tp_getset, Buffer_getset},
     {Py_tp_init, Buffer_init},
 //    {Py_tp_new, PyType_GenericNew},
