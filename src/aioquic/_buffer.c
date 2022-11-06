@@ -5,6 +5,12 @@
 
 #define MODULE_NAME "aioquic._buffer"
 
+// https://foss.heptapod.net/pypy/pypy/-/issues/3770
+#ifndef Py_None
+#define Py_None (&_Py_NoneStruct)
+#endif 
+
+
 static PyObject *BufferReadError;
 static PyObject *BufferWriteError;
 
