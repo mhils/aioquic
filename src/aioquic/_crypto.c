@@ -42,6 +42,8 @@ typedef struct {
     unsigned char nonce[AEAD_NONCE_LENGTH];
 } AEADObject;
 
+static PyObject *AEADType;
+
 static EVP_CIPHER_CTX *
 create_ctx(const EVP_CIPHER *cipher, int key_length, int operation)
 {
@@ -243,7 +245,7 @@ static PyType_Slot AEADType_slots[] = {
     {Py_tp_methods, AEAD_methods},
     {Py_tp_doc, "AEAD objects 2"},
     {Py_tp_init, AEAD_init},
-    {Py_tp_new, PyType_GenericNew},
+//    {Py_tp_new, PyType_GenericNew},
     {0, 0},
 };
 
@@ -266,6 +268,8 @@ typedef struct {
     unsigned char mask[31];
     unsigned char zero[5];
 } HeaderProtectionObject;
+
+static PyObject *HeaderProtectionType;
 
 static int
 HeaderProtection_init(HeaderProtectionObject *self, PyObject *args, PyObject *kwargs)
@@ -439,7 +443,7 @@ static PyType_Slot HeaderProtectionType_slots[] = {
     {Py_tp_methods, HeaderProtection_methods},
     {Py_tp_doc, "HeaderProtection objects 2"},
     {Py_tp_init, HeaderProtection_init},
-    {Py_tp_new, PyType_GenericNew},
+//    {Py_tp_new, PyType_GenericNew},
     {0, 0},
 };
 
@@ -476,15 +480,26 @@ PyInit__crypto(void)
     Py_INCREF(CryptoError);
     PyModule_AddObject(m, "CryptoError", CryptoError);
 
-    PyObject *v = PyType_FromSpec(&AEADType_spec);
-    if (v == NULL)
-        return NULL;
-    PyModule_AddObject(m, "AEAD", v);
 
-    PyObject *w = PyType_FromSpec(&HeaderProtectionType_spec);
-    if (w == NULL)
+
+    AEADType = PyType_FromSpec(&AEADType_spec);
+    if (AEADType == NULL)
         return NULL;
-    PyModule_AddObject(m, "HeaderProtection", w);
+
+    PyObject *o = PyType_FromSpec(&AEADType_spec);
+    if (o == NULL)
+        return NULL;
+    PyModule_AddObject(m, "AEAD", o);
+
+
+    HeaderProtection = PyType_FromSpec(&HeaderProtection_spec);
+    if (HeaderProtection == NULL)
+        return NULL;
+
+    PyObject *p = PyType_FromSpec(&HeaderProtection_spec);
+    if (p == NULL)
+        return NULL;
+    PyModule_AddObject(m, "HeaderProtection", p);
 
     // ensure required ciphers are initialised
     EVP_add_cipher(EVP_aes_128_ecb());

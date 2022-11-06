@@ -15,6 +15,8 @@ typedef struct {
     uint8_t *pos;
 } BufferObject;
 
+static PyObject *BufferType;
+
 #define CHECK_READ_BOUNDS(self, len) \
     if (len < 0 || self->pos + len > self->end) { \
         PyErr_SetString(BufferReadError, "Read out of bounds"); \
@@ -411,7 +413,7 @@ static PyType_Slot BufferType_slots[] = {
     {Py_tp_doc, "Buffer objects 2"},
     {Py_tp_getset, Buffer_getset},
     {Py_tp_init, Buffer_init},
-    {Py_tp_new, PyType_GenericNew},
+//    {Py_tp_new, PyType_GenericNew},
     {0, 0},
 };
 
@@ -454,11 +456,15 @@ PyInit__buffer(void)
     Py_INCREF(BufferWriteError);
     PyModule_AddObject(m, "BufferWriteError", BufferWriteError);
 
-    PyObject *v = PyType_FromSpec(&BufferType_spec);
-    if (v == NULL)
+
+    BufferType = PyType_FromSpec(&BufferType_spec);
+    if (BufferType == NULL)
         return NULL;
-    Py_INCREF(&v);
-    PyModule_AddObject(m, "Buffer", v);
+
+    PyObject *o = PyType_FromSpec(&BufferType_spec);
+    if (o == NULL)
+        return NULL;
+    PyModule_AddObject(m, "Buffer", o);
 
     return m;
 }
